@@ -1,8 +1,9 @@
 import sys
-from PIL import Image
+from PIL import Image, ImageSequence
+from time import sleep
 
 class ASCII_image:
-    def __init__(self, image_path = None, image = None, new_width = None):
+    def __init__(self, image_path = None, image = None, new_width = 100):
         self.ASCII_CHARS = ["@", "#", "S", "%", "?", "*", "+", ";", ":", ",", "."]
         self.new_width = new_width
         if image_path and not image:
@@ -11,7 +12,7 @@ class ASCII_image:
         elif image and not image_path:
             self.image = image
         else:
-            print('Provide only path or image')
+            print('Provide only path or only image')
             exit(1)
         if self.new_width != None:
             self.resize_image()
@@ -49,47 +50,56 @@ class ASCII_image:
         
     def save(self, file_name = 'default_name'):
         if file_name == 'default_name':
-            with open(self.image_path.split('.')[:-1] + "_ascii_image.txt", "w") as f:
+            with open(self.image_path.split('.')[0] + "_ascii_image.txt", "w") as f:
                 f.write(self.ascii_image)
         else:
-            with open(file_name.split('.')[:-1] + "_ascii_image.txt", "w") as f:
+            with open(file_name.split('.')[0] + "_ascii_image.txt", "w") as f:
                 f.write(self.ascii_image)
         
 class ASCII_gif():
-    def __init__(self, gif_path, new_width=100):
+    def __init__(self, gif_path, new_width=75):
         self.ASCII_CHARS = ["@", "#", "S", "%", "?", "*", "+", ";", ":", ",", "."]
         self.gif_path = gif_path
         self.new_width = new_width
         self.gif_frames = []
         self.open_gif()
-        self.convert_to_ascii()
         print(len(self.gif_frames))
         print(self.gif_frames)
+        self.convert_to_ascii()
         
     def open_gif(self):
         try:
-            with Image.open(self.gif_path) as gif:
-                try:
-                    while True:
-                        gif.seek(gif.tell() + 1)
-                        self.gif_frames.append(gif)
-                except:
-                    pass
+            self.gif = Image.open(self.gif_path)
         except:
             print(self.gif_path, " is not a valid path to an gif.")
             sys.exit(0)
             
     def convert_to_ascii(self):
         converted_frames = []
+        for frame in ImageSequence.Iterator(self.gif):
+            new_frame = ASCII_image(image = frame.convert('RGB'), new_width = self.new_width)
+            converted_frames.append(new_frame)
+        self.gif_frames = converted_frames.copy()
+        
+    def print_gif(self):
         for frame in self.gif_frames:
-            frame = ASCII_image(frame)
-            converted_frames.append
-    
-    
-    
+            [print("\n") for i in range(20)]
+            frame.print_image()
+            sleep(0.2)
+            
+    def save(self, file_name = 'default_name'):
+        if file_name == 'default_name':
+            file_name = self.gif_path.split('.')[0]
+        else:
+            file_name = file_name.split('.')[0]
+        
+        for frame_nr, frame in enumerate(self.gif_frames):
+            frame.save(file_name + str(frame_nr))
         
 if __name__ == "__main__":
-    # path = "./mario.png"
-    # ascii_img = ASCII_image(path)
-    # ascii_img.print_image()
-    gif = ASCII_gif("C:/Users/szomi/Dropbox/Komputer/Desktop/simson.gif")
+    path = "C:/Users/szomi/Dropbox/Komputer/Desktop/lame.png"
+    ascii_img = ASCII_image(path)
+    ascii_img.print_image()
+    gif = ASCII_gif("C:/Users/szomi/Dropbox/Komputer/Desktop/love.gif")
+    gif.print_gif()
+    gif.save()
