@@ -3,7 +3,7 @@ from PIL import Image, ImageSequence
 from time import sleep
 
 class ASCII_image:
-    def __init__(self, image_path = None, image = None, new_width = 100):
+    def __init__(self, image_path = None, image = None, new_width = None):
         self.ASCII_CHARS = ["@", "#", "S", "%", "?", "*", "+", ";", ":", ",", "."]
         self.new_width = new_width
         if image_path and not image:
@@ -57,7 +57,7 @@ class ASCII_image:
                 f.write(self.ascii_image)
         
 class ASCII_gif():
-    def __init__(self, gif_path, new_width=75):
+    def __init__(self, gif_path, new_width = None):
         self.ASCII_CHARS = ["@", "#", "S", "%", "?", "*", "+", ";", ":", ",", "."]
         self.gif_path = gif_path
         self.new_width = new_width
@@ -81,11 +81,12 @@ class ASCII_gif():
             converted_frames.append(new_frame)
         self.gif_frames = converted_frames.copy()
         
-    def print_gif(self):
-        for frame in self.gif_frames:
-            [print("\n") for i in range(20)]
-            frame.print_image()
-            sleep(0.2)
+    def print_gif(self, loops = 1):
+        for i in range(loops):
+            for frame in self.gif_frames:
+                [print("\n") for i in range(20)]
+                frame.print_image()
+                sleep(0.2)
             
     def save(self, file_name = 'default_name'):
         if file_name == 'default_name':
@@ -97,9 +98,10 @@ class ASCII_gif():
             frame.save(file_name + str(frame_nr))
         
 if __name__ == "__main__":
-    path = "C:/Users/szomi/Dropbox/Komputer/Desktop/lame.png"
-    ascii_img = ASCII_image(path)
+    img_path = "C:/Users/szomi/Dropbox/Komputer/Desktop/lame.png"
+    gif_path = "C:/Users/szomi/Dropbox/Komputer/Desktop/simson.gif"
+    ascii_img = ASCII_image(img_path, new_width = 100)
     ascii_img.print_image()
-    gif = ASCII_gif("C:/Users/szomi/Dropbox/Komputer/Desktop/love.gif")
-    gif.print_gif()
+    gif = ASCII_gif(gif_path, 50)
+    gif.print_gif(10)
     gif.save()
