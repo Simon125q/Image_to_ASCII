@@ -1,2 +1,3 @@
 # Image_to_ASCII
-Image to ASCII converter
+Program that converts images and gifs to ASCII arts.
+It can save them in text file or print in terminal
